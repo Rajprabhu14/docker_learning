@@ -1,6 +1,7 @@
 import re
 import csv
-from datetime import date
+import os.path
+from datetime import date, timedelta
 from selenium import webdriver
 from selenium.webdriver import Chrome
 from selenium.webdriver.support.ui import WebDriverWait
@@ -17,23 +18,35 @@ class scrap:
         self.old_no = 0
         self.flag = True
         self.old_flag = True
-        self.fieldnames = ['sl_no','District','Block', 'time' ,'temp', 'rh', 'wind_speed', 'pcip']
+        self.fieldnames = ['sl_no', 'date', 'District','Block', 'time' ,'temp', 'rh', 'wind_speed', 'pcip']
         d = date.today()
         date_day =  '-'.join(str(x) for x in (d.month, d.day, d.year))
-        self.current_date = "current_" + date_day
-        self.last_date = "last_day_of_" + date_day
+        self.current_date = "current_" + date_day + ".csv"
+        self.current_date = date_day
+        self.previous_date = d - timedelta(1)
+
+        print(self.previous_date)
+        self.last_date = "1weather_data.csv"
         self.driver = webdriver.Chrome(chrome_path)
+    def createFile(self):
+        if os.path.isfile(self.last_date):
+            print('file already present')
+        else:
+            with open(self.last_date, 'a', newline='', encoding='utf8') as csvfile:
+                writer = csv.DictWriter(csvfile, fieldnames=self.fieldnames)
+                writer.writeheader()
 
     def writePreviousDateValue(self, districtName, block_name, value):
         self.old_no += 1
         with open(self.last_date, 'a', newline='', encoding='utf8') as csvfile:
             value['sl_no'] = self.old_no
+            value['date'] =  self.previous_date
             value['District'] = districtName
             value['Block'] = block_name
             writer = csv.DictWriter(csvfile, fieldnames=self.fieldnames)
-            if self.old_flag:
-                writer.writeheader()
-                self.old_flag = False
+            # if self.old_flag:
+            #     writer.writeheader()
+            #     self.old_flag = False
             writer.writerow(value)
 
     def writeCurrentDateValue(self, districtName, block_name, value):
@@ -71,7 +84,7 @@ class scrap:
                 value['pcip'] = 'No data'
                 value['time'] = time[idx]
                 self.writeCurrentDateValue(districtName, block_name, value)
-        self.driver.back()
+        # self.driver.back()
 
     def previousDataWrite(self, districtName, block_name):
         value = {}
@@ -122,10 +135,10 @@ class scrap:
                 self.CurrentDataWrite(districtName, block_name[number - 1])
             except:
                 print('district - ' + districtName + ' block - '+ block_name[number - 1])
-                self.CurrentDataWrite(districtName, block_name[number - 1])
-                # previous = self.driver.find_element_by_link_text("Last Day")
-                # previous.click()
-                # self.previousDataWrite(districtName, block_name[number - 1])
+                #self.CurrentDataWrite(districtName, block_name[number - 1])
+                previous = self.driver.find_element_by_link_text("Last Day")
+                previous.click()
+                self.previousDataWrite(districtName, block_name[number - 1])
         self.driver.back()
 
     def DistrictClick(self, anchor_list):
@@ -144,6 +157,7 @@ class scrap:
         self.driver.back()
 
     def selenium(self):
+        self.createFile()
         driver = self.driver
         QueryFormatString = 'http://tawn.tnau.ac.in/'
         driver.get(QueryFormatString)
