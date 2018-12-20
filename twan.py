@@ -24,10 +24,10 @@ class scrap:
         self.current_date = "current_" + date_day + ".csv"
         self.current_date = date_day
         self.previous_date = d - timedelta(1)
-
         print(self.previous_date)
         self.last_date = "weather_data.csv"
         self.driver = webdriver.Chrome(chrome_path)
+
     def createFile(self):
         if os.path.isfile(self.last_date):
             print('file already present')
