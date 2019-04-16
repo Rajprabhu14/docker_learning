@@ -39,7 +39,7 @@ class scrap:
        # print(response)
         try:
             i['title'] = response['title']
-            i['address'] = response['address'] +', ' + response['city'] + ', ' + response['province']
+
             if 'bedrooms' not in response:
                 i['no_of_beds'] = ''
                 #print('bed not there')
@@ -50,6 +50,9 @@ class scrap:
                # print('baths not there')
             else:
                 i['baths'] = response['baths']
+            if  response['address'] is None:
+                response['address'] = ''
+            i['address'] = response['address'] + ', ' + response['city'] + ', ' + response['province']
             i['price'] = response['price']
             i['square_feet'] = response['sq_feet']
             i['phone'] = response['phone']
@@ -69,49 +72,105 @@ class scrap:
 flag = True
 sl_no = 0
 checking = 0
-#19
-#76
-#119
+fieldnames = ['sl_no',
+              'reference_id', 'user_id',
+              'title', 'address', 'no_of_beds', 'baths', 'price', 'availability', 'rented', 'type', 'square_feet',
+              'phone', 'latitude', 'longitude']
 page_number =0
 length_page = 1
 loop_run = True
-edmonton = 'https://www.rentfaster.ca/api/search.json?keywords=&proximity_type=location-proximity&cur_page={0}&beds=&type=&price_range_adv%5Bfrom%5D=null&price_range_adv%5Bto%5D=null&novacancy=0&city_id=2'
+location = {}
+location['edmonton'] = 'https://www.rentfaster.ca/api/search.json?keywords=&proximity_type=location-proximity&cur_page={0}&beds=&type=&price_range_adv%5Bfrom%5D=null&price_range_adv%5Bto%5D=null&novacancy=0&city_id=2'
     #'https://www.rentfaster.ca/api/search.json?beds=&type=&price_range_adv%5Bfrom%5D=null&price_range_adv%5Bto%5D=null&proximity_type=location-city&novacancy=0&city_id=2'
-calgary = 'https://www.rentfaster.ca/api/search.json?keywords=&cur_page={0}&price_range_adv[from]=&price_range_adv[to]=&beds=&type=&city_id=1&proximity_type=location-city&novacancy=0'
+location['calgary'] = 'https://www.rentfaster.ca/api/search.json?keywords=&cur_page={0}&price_range_adv[from]=&price_range_adv[to]=&beds=&type=&city_id=1&proximity_type=location-city&novacancy=0'
 
-airdrie = 'https://www.rentfaster.ca/api/search.json?keywords=&cur_page={0}&price_range_adv[from]=&price_range_adv[to]=&beds=&type=&city_id=8&proximity_type=location-city&novacancy=0'
+location['airdrie'] = 'https://www.rentfaster.ca/api/search.json?keywords=&cur_page={0}&price_range_adv[from]=&price_range_adv[to]=&beds=&type=&city_id=8&proximity_type=location-city&novacancy=0'
 
 # test = scrap.pageNumber('https://www.rentfaster.ca/ab/calgary/rentals/?keywords=&cur_page=1&proximity_type=location-city&novacancy=0&city_id=1')
-while loop_run:
+# while loop_run:
+#     location_name = 'calgary'
+#     locations = ['calgary', 'airdrie', 'edmonton']
+#
+#     url = scrap.url_loader(location[location_name], page_number)
+#     responses = scrap.json_convert(url)
+#     print("page_number:" + str(page_number))
+#     page_number += 1
+#     length_page += 1
+#     if len(responses['listings']) == 0:
+#         checking += 1
+#         if checking == 5:
+#             loop_run = False
+#             break
+#     for listing in responses['listings']:
+#         value = scrap.value_get(listing)
+#         if (value is not  None):
+#             sl_no += 1
+#             #print(sl_no)
+#             value['sl_no'] = sl_no
+#             fieldnames = ['sl_no',
+#                           'reference_id', 'user_id',
+#                           'title','address','no_of_beds','baths','price', 'availability', 'rented', 'type','square_feet','phone','latitude', 'longitude']
+#             try:
+#                 with open(location_name +'_with_id.csv', 'a', newline='',  encoding='utf8') as csvfile:
+#
+#                     writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+#
+#                     if flag:
+#                         writer.writeheader()
+#                         flag = False
+#                     writer.writerow(value)
+#             except:
+#                print(value)
+#                print("page_number:" + str(page_number))
+# #                    print(value)
+# location = {}
+# location['edmonton'] = 'https://www.rentfaster.ca/api/search.json?keywords=&proximity_type=location-proximity&cur_page={0}&beds=&type=&price_range_adv%5Bfrom%5D=null&price_range_adv%5Bto%5D=null&novacancy=0&city_id=2'
+#     #'https://www.rentfaster.ca/api/search.json?beds=&type=&price_range_adv%5Bfrom%5D=null&price_range_adv%5Bto%5D=null&proximity_type=location-city&novacancy=0&city_id=2'
+# location['calgary'] = 'https://www.rentfaster.ca/api/search.json?keywords=&cur_page={0}&price_range_adv[from]=&price_range_adv[to]=&beds=&type=&city_id=1&proximity_type=location-city&novacancy=0'
+#
+# location['airdrie'] = 'https://www.rentfaster.ca/api/search.json?keywords=&cur_page={0}&price_range_adv[from]=&price_range_adv[to]=&beds=&type=&city_id=8&proximity_type=location-city&novacancy=0'
+#
+# # test = scrap.pageNumber('https://www.rentfaster.ca/ab/calgary/rentals/?keywords=&cur_page=1&proximity_type=location-city&novacancy=0&city_id=1')
+locations = ['airdrie', 'edmonton', 'calgary']
+for location_name in locations:
+    flag = True
+    sl_no = 0
+    checking = 0
+    page_number = 0
+    loop_run = True
+    length_page = 1
+    print(location_name)
+    while loop_run:
+    # location_name = 'calgary'
 
-    url = scrap.url_loader(airdrie, page_number)
-    responses = scrap.json_convert(url)
-    print("page_number:" + str(page_number))
-    page_number += 1
-    length_page += 1
-    if len(responses['listings']) == 0:
-        checking += 1
-        if checking == 5:
-            loop_run = False
-            break
-    for listing in responses['listings']:
-        value = scrap.value_get(listing)
-        if (value is not  None):
-            sl_no += 1
-            #print(sl_no)
-            value['sl_no'] = sl_no
-            fieldnames = ['sl_no',
-                          'reference_id', 'user_id',
-                          'title','address','no_of_beds','baths','price', 'availability', 'rented', 'type','square_feet','phone','latitude', 'longitude']
-            try:
-                with open('airdrie_with_id.csv', 'a', newline='',  encoding='utf8') as csvfile:
+        url = scrap.url_loader(location[location_name], page_number)
+        responses = scrap.json_convert(url)
+        print("page_number:" + str(page_number))
+        page_number += 1
+        length_page += 1
+        if len(responses['listings']) == 0:
+            checking += 1
+            if checking == 5:
+                loop_run = False
+                break
+        for listing in responses['listings']:
+            value = scrap.value_get(listing)
+            if (value is not  None):
+                sl_no += 1
+                #print(sl_no)
+                value['sl_no'] = sl_no
+                fieldnames = ['sl_no',
+                              'reference_id', 'user_id',
+                              'title','address','no_of_beds','baths','price', 'availability', 'rented', 'type','square_feet','phone','latitude', 'longitude']
+                try:
+                    with open(location_name +'_with_id.csv', 'a', newline='',  encoding='utf8') as csvfile:
 
-                    writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+                        writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
 
-                    if flag:
-                        writer.writeheader()
-                        flag = False
-                    writer.writerow(value)
-            except:
-               print("page_number:" + str(page_number))
-               print(value)
+                        if flag:
+                            writer.writeheader()
+                            flag = False
+                        writer.writerow(value)
+                except:
+                   print("page_number:" + str(page_number))
+                   print(value)
