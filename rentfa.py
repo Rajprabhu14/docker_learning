@@ -81,6 +81,8 @@ class scrap:
 file_path = os.environ.get('LOCAL_DATA_LOCATION')
 if file_path is None:
     file_path = os.getcwd()
+print(file_path)
+print(os.environ.get('LOCAL_DATA_LOCATION'))
 flag = True  # flag for writing Header
 sl_no = 0
 checking = 0  # page number checking
