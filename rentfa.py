@@ -78,6 +78,7 @@ class scrap:
             pass  # pass if issue found on record
 
 
+print('Demo')
 file_path = os.environ.get('LOCAL_DATA_LOCATION')
 if file_path is None:
     file_path = os.getcwd()
