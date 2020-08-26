@@ -78,10 +78,8 @@ class scrap:
             pass  # pass if issue found on record
 
 
-usr_loc = len(sys.argv)
-if usr_loc == 2:
-    file_path = sys.argv[1]
-else:
+file_path = os.environ.get('LOCAL_DATA_LOCATION')
+if file_path is None:
     file_path = os.getcwd()
 flag = True  # flag for writing Header
 sl_no = 0
