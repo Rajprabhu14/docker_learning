@@ -1,28 +1,31 @@
 import csv
-from bs4 import BeautifulSoup as BS
-import html5lib
-import requests
+import json
 import time
 import urllib.request
-import json
+
+import pandas as pd
+import requests
+from bs4 import BeautifulSoup as BS
+
+
 class scrap:
     url = ''
-    def pageNumber(url):
-        # req = requests.get(url)
-        req = urllib.request.urlopen(url)
-        # 'https://www.remax.ca/find-agent-or-office/agent/#type=agents&minBathroomNumber=&minBedroomNumber=&minYearBuild=&maxYearBuild=&maxPrice=&minPrice=&minFee=&maxFee=&maxLotSize=&minLotSize=&minSquareFeet=&maxSquareFeet=&minTransitScore=&maxTransitScore=&parkingSize=&minWalkScore=&maxWalkScore=&showTypeIds=&propertyTypeIds=&additionalKeywords=&neighbourhood=&mode=agents&neighbourhoodId=&topQuery=&queryType=agent&isCommercial=false&language=1&refreshPins=true&officetab.index=1&mainlist.page=1'
-        soup1 = BS(req, "html5lib")
-        page_numbers = soup1.find_all('span',class_ ='paging-link-wrap')
-
-        check_pageNumber = 0
-        for page_number in page_numbers:
-            try:
-                pageNumber = int(page_number.text)
-                if check_pageNumber <= pageNumber:
-                    check_pageNumber = pageNumber
-            except:
-                print('special character on pager')
-        return check_pageNumber
+    # def pageNumber(url):
+    #     # req = requests.get(url)
+    #     req = urllib.request.urlopen(url)
+    #     # 'https://www.remax.ca/find-agent-or-office/agent/#type=agents&minBathroomNumber=&minBedroomNumber=&minYearBuild=&maxYearBuild=&maxPrice=&minPrice=&minFee=&maxFee=&maxLotSize=&minLotSize=&minSquareFeet=&maxSquareFeet=&minTransitScore=&maxTransitScore=&parkingSize=&minWalkScore=&maxWalkScore=&showTypeIds=&propertyTypeIds=&additionalKeywords=&neighbourhood=&mode=agents&neighbourhoodId=&topQuery=&queryType=agent&isCommercial=false&language=1&refreshPins=true&officetab.index=1&mainlist.page=1'
+    #     soup1 = BS(req, "html5lib")
+    #     page_numbers = soup1.find_all('span',class_ ='paging-link-wrap')
+    #
+    #     check_pageNumber = 0
+    #     for page_number in page_numbers:
+    #         try:
+    #             pageNumber = int(page_number.text)
+    #             if check_pageNumber <= pageNumber:
+    #                 check_pageNumber = pageNumber
+    #         except:
+    #             print('special character on pager')
+    #     return check_pageNumber
 
     def json_convert(response):
         try:
@@ -40,19 +43,19 @@ class scrap:
         try:
             i['title'] = response['title']
 
-            if 'bedrooms' not in response:
+            if 'bedrooms' not in response:  # check bed parameter on json
                 i['no_of_beds'] = ''
                 #print('bed not there')
             else:
                 i['no_of_beds'] = response['bedrooms']
-            if 'baths' not in response:
+            if 'baths' not in response: # check bath parameter on json
                 i['baths'] = ''
                # print('baths not there')
             else:
                 i['baths'] = response['baths']
             if  response['address'] is None:
                 response['address'] = ''
-            i['address'] = response['address'] + ', ' + response['city'] + ', ' + response['province']
+            i['address'] = response['address'] + ', ' + response['city'] + ', ' + response['province'] # address merging
             i['price'] = response['price']
             i['square_feet'] = response['sq_feet']
             i['phone'] = response['phone']
@@ -65,75 +68,39 @@ class scrap:
             i["user_id"] = response["userId"]
             return i
         except:
-            #print(response)
-            pass
+            print('errors')
+            print(response)
+            pass # pass if issue found on record
 
 
-flag = True
+flag = True # flag for writing Header
 sl_no = 0
-checking = 0
+checking = 0 # page number checking
 fieldnames = ['sl_no',
               'reference_id', 'user_id',
               'title', 'address', 'no_of_beds', 'baths', 'price', 'availability', 'rented', 'type', 'square_feet',
               'phone', 'latitude', 'longitude']
 page_number =0
 length_page = 1
-loop_run = True
+loop_run = True # end loop of Location
 location = {}
+
+# URL of location needs to be scrapped
 location['edmonton'] = 'https://www.rentfaster.ca/api/search.json?keywords=&proximity_type=location-proximity&cur_page={0}&beds=&type=&price_range_adv%5Bfrom%5D=null&price_range_adv%5Bto%5D=null&novacancy=0&city_id=2'
-    #'https://www.rentfaster.ca/api/search.json?beds=&type=&price_range_adv%5Bfrom%5D=null&price_range_adv%5Bto%5D=null&proximity_type=location-city&novacancy=0&city_id=2'
+# https://www.rentfaster.ca/ab/edmonton/
 location['calgary'] = 'https://www.rentfaster.ca/api/search.json?keywords=&cur_page={0}&price_range_adv[from]=&price_range_adv[to]=&beds=&type=&city_id=1&proximity_type=location-city&novacancy=0'
-
+# https://www.rentfaster.ca/ab/calgary/
 location['airdrie'] = 'https://www.rentfaster.ca/api/search.json?keywords=&cur_page={0}&price_range_adv[from]=&price_range_adv[to]=&beds=&type=&city_id=8&proximity_type=location-city&novacancy=0'
+# https://www.rentfaster.ca/ab/airdrie/
+locations = [
+     'airdrie',
+    #  'edmonton',
+    #  'calgary'
+]
 
-# test = scrap.pageNumber('https://www.rentfaster.ca/ab/calgary/rentals/?keywords=&cur_page=1&proximity_type=location-city&novacancy=0&city_id=1')
-# while loop_run:
-#     location_name = 'calgary'
-#     locations = ['calgary', 'airdrie', 'edmonton']
-#
-#     url = scrap.url_loader(location[location_name], page_number)
-#     responses = scrap.json_convert(url)
-#     print("page_number:" + str(page_number))
-#     page_number += 1
-#     length_page += 1
-#     if len(responses['listings']) == 0:
-#         checking += 1
-#         if checking == 5:
-#             loop_run = False
-#             break
-#     for listing in responses['listings']:
-#         value = scrap.value_get(listing)
-#         if (value is not  None):
-#             sl_no += 1
-#             #print(sl_no)
-#             value['sl_no'] = sl_no
-#             fieldnames = ['sl_no',
-#                           'reference_id', 'user_id',
-#                           'title','address','no_of_beds','baths','price', 'availability', 'rented', 'type','square_feet','phone','latitude', 'longitude']
-#             try:
-#                 with open(location_name +'_with_id.csv', 'a', newline='',  encoding='utf8') as csvfile:
-#
-#                     writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
-#
-#                     if flag:
-#                         writer.writeheader()
-#                         flag = False
-#                     writer.writerow(value)
-#             except:
-#                print(value)
-#                print("page_number:" + str(page_number))
-# #                    print(value)
-# location = {}
-# location['edmonton'] = 'https://www.rentfaster.ca/api/search.json?keywords=&proximity_type=location-proximity&cur_page={0}&beds=&type=&price_range_adv%5Bfrom%5D=null&price_range_adv%5Bto%5D=null&novacancy=0&city_id=2'
-#     #'https://www.rentfaster.ca/api/search.json?beds=&type=&price_range_adv%5Bfrom%5D=null&price_range_adv%5Bto%5D=null&proximity_type=location-city&novacancy=0&city_id=2'
-# location['calgary'] = 'https://www.rentfaster.ca/api/search.json?keywords=&cur_page={0}&price_range_adv[from]=&price_range_adv[to]=&beds=&type=&city_id=1&proximity_type=location-city&novacancy=0'
-#
-# location['airdrie'] = 'https://www.rentfaster.ca/api/search.json?keywords=&cur_page={0}&price_range_adv[from]=&price_range_adv[to]=&beds=&type=&city_id=8&proximity_type=location-city&novacancy=0'
-#
-# # test = scrap.pageNumber('https://www.rentfaster.ca/ab/calgary/rentals/?keywords=&cur_page=1&proximity_type=location-city&novacancy=0&city_id=1')
-locations = ['airdrie', 'edmonton', 'calgary']
 for location_name in locations:
     flag = True
+    flag_without_id = True
     sl_no = 0
     checking = 0
     page_number = 0
@@ -141,36 +108,38 @@ for location_name in locations:
     length_page = 1
     print(location_name)
     while loop_run:
-    # location_name = 'calgary'
-
-        url = scrap.url_loader(location[location_name], page_number)
+        url = scrap.url_loader(location[location_name], page_number) # load json data for page for particular URL
         responses = scrap.json_convert(url)
-        print("page_number:" + str(page_number))
-        page_number += 1
+        # print("page_number:" + str(page_number)) # value scrapped page print
+        page_number += 1 # prepare for next page
         length_page += 1
-        if len(responses['listings']) == 0:
+        if len(responses['listings']) == 0: # termination of page check
             checking += 1
-            if checking == 5:
-                loop_run = False
+            if checking == 5: # terminate Loop if Last 5 page have zero listing
+            #     loop_run = False
+            #     f = pd.read_csv(location_name + '_with_id.csv')
+            #     d = f.drop(["reference_id", "user_id"], axis=1)
+            #     d.to_csv(location_name + '_without_id.csv', index=False)
                 break
-        for listing in responses['listings']:
+        for listing in responses['listings']: # json value looping
             value = scrap.value_get(listing)
             if (value is not  None):
                 sl_no += 1
                 #print(sl_no)
                 value['sl_no'] = sl_no
-                fieldnames = ['sl_no',
-                              'reference_id', 'user_id',
-                              'title','address','no_of_beds','baths','price', 'availability', 'rented', 'type','square_feet','phone','latitude', 'longitude']
+                # fieldnames = ['sl_no',
+                #               'reference_id', 'user_id',
+                #               'title','address','no_of_beds','baths','price', 'availability', 'rented', 'type','square_feet','phone','latitude', 'longitude']
                 try:
                     with open(location_name +'_with_id.csv', 'a', newline='',  encoding='utf8') as csvfile:
 
                         writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
 
-                        if flag:
+                        if flag: # header writing
                             writer.writeheader()
                             flag = False
                         writer.writerow(value)
-                except:
+                except: # print error page number
+                   print('errors')
                    print("page_number:" + str(page_number))
                    print(value)

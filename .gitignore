@@ -3,3 +3,6 @@
 *.csv
 *.png
 *.zip
+env/
+/.vscode/
+/*.ipynb_checkpoints/
