@@ -5,7 +5,6 @@ import sys
 import time
 import urllib.request
 
-import pandas as pd
 import requests
 from bs4 import BeautifulSoup as BS
 
