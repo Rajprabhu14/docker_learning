@@ -119,6 +119,9 @@ for location_name in locations:
     loop_run = True
     length_page = 1
     print(location_name)
+    file_location = os.path.join(
+        file_path, (location_name + '_with_id.csv'))
+    print(file_location)
     while loop_run:
         # load json data for page for particular URL
         url = scrap.url_loader(location[location_name], page_number)
@@ -144,8 +147,7 @@ for location_name in locations:
                 #               'reference_id', 'user_id',
                 #               'title','address','no_of_beds','baths','price', 'availability', 'rented', 'type','square_feet','phone','latitude', 'longitude']
                 try:
-                    file_location = os.path.join(
-                        file_path, (location_name + '_with_id.csv'))
+
                     with open(file_location, 'a', newline='',  encoding='utf8') as csvfile:
 
                         writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
