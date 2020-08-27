@@ -20,8 +20,8 @@
 
 # Difference between mount & volume
 
-| Volume                                           | Bind                                                       |
-| ------------------------------------------------ | ---------------------------------------------------------- |
-| managed via Docker client                        | we need to handle                                          |
-| Independent file system                          | The container has access to the files on the docker host   |
-| **usage**: handling sourcode, configuration file | **usage**: backup & configuration(share between container) |
+| Volume                                                     | Bind                                                     |
+| ---------------------------------------------------------- | -------------------------------------------------------- |
+| managed via Docker client                                  | we need to handle                                        |
+| Independent file system                                    | The container has access to the files on the docker host |
+| **usage**: backup & configuration(share between container) | **usage**: handling sourcode, configuration file         |
