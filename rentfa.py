@@ -117,6 +117,7 @@ for location_name in locations:
     length_page = 1
     file_location = os.path.join(
         file_path, (location_name + '_with_id.csv'))
+    print(f'filename {(location_name + "_with_id.csv")}')
     while loop_run:
         # load json data for page for particular URL
         url = scrap.url_loader(location[location_name], page_number)
@@ -155,4 +156,4 @@ for location_name in locations:
                     print('errors')
                     print("page_number:" + str(page_number))
                     print(value)
-        Print("Scrapping succesully ran")
+    print("Scrapping succesully ran")
