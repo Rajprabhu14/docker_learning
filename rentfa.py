@@ -78,12 +78,9 @@ class scrap:
             pass  # pass if issue found on record
 
 
-print('Demo')
 file_path = os.environ.get('LOCAL_DATA_LOCATION')
 if file_path is None:
     file_path = os.getcwd()
-print(file_path)
-print(os.environ.get('LOCAL_DATA_LOCATION'))
 flag = True  # flag for writing Header
 sl_no = 0
 checking = 0  # page number checking
@@ -118,10 +115,8 @@ for location_name in locations:
     page_number = 0
     loop_run = True
     length_page = 1
-    print(location_name)
     file_location = os.path.join(
         file_path, (location_name + '_with_id.csv'))
-    print(file_location)
     while loop_run:
         # load json data for page for particular URL
         url = scrap.url_loader(location[location_name], page_number)
@@ -160,3 +155,4 @@ for location_name in locations:
                     print('errors')
                     print("page_number:" + str(page_number))
                     print(value)
+        Print("Scrapping succesully ran")
