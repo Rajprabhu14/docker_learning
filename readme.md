@@ -1,22 +1,22 @@
 # Build the image
 
-> docker build -t rentscraping:latest .
+`docker build -t rentscraping:latest .`
 
 # create volume
 
-> docker container run -it --name demo -v data rentscraping:latest
+`docker container run -it --name demo -v data rentscraping:latest`
 
 # To start detach volume
 
-> docker container start demo
+`docker container start demo`
 
 # To debug the existing container
 
-> docker container exec -it demo bash
+`docker container exec -it demo bash`
 
 # To bind the local folder to volume
 
-> docker container run --name demo --mount type=bind,src=/k/docker_demo_volume,dst=/data rentscraping:latest'
+`docker container run --name demo --mount type=bind,src=/k/docker_demo_volume,dst=/data rentscraping:latest`
 
 # Difference between mount & volume
 
