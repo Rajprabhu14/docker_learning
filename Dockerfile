@@ -16,13 +16,14 @@ copy requirements.txt /scrapping
 ## Make Sure the data directory present
 RUN mkdir -p data
 ENV LOCAL_DATA_LOCATION='/data'
-
+ENV PS1="\h:\w#"
 ## clone the data from git
 ## install required packages
 WORKDIR "scrapping"
 RUN pip install -r requirements.txt
 ## start when run the image for container
-# CMD ['/data']
-# ENTRYPOINT [ "python",  "rentfa.py" ]
-ENTRYPOINT [ "sh" ]
+CMD ['/data']
+ENTRYPOINT [ "python",  "rentfa.py" ]
+python rentfa.py  /data
+# ENTRYPOINT [ "sh" ]
 

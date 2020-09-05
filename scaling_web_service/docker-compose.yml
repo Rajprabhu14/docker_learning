@@ -1,0 +1,35 @@
+version: "3.3"
+
+services:
+  pg:
+    image: postgres:${PG_VERSION:-9.6}
+    volumes:
+      - pg-data
+    environment:
+      - POSTGRES_DB
+      - POSTGRES_USER
+      - POSTGRES_PASSWORD
+  lb:
+    image: jfahrer/lb:v3
+    depends_on:
+      - webapp
+    build:
+      context: ./
+    ports:
+      - 81:80
+    environment:
+      - PROXY_UPSTREAM
+  webapp:
+    image: jfahrer/demo_web_app:wait_for_pg
+    environment:
+      - POSTGRES_DB
+      - POSTGRES_USER
+      - POSTGRES_PASSWORD
+      - POSTGRES_HOST
+    # ports:
+    #   - 9292:9292
+    depends_on:
+      - pg
+
+volumes:
+  pg_data:
