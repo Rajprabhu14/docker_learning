@@ -1,0 +1,31 @@
+version: "3.3"
+services:
+  fast_api:
+    image: arulrajprabhu420/fastapi
+    build:
+      context: ./
+    volumes:
+      - .:/app
+    environment:
+      - POSTGRES_DB
+      - POSTGRES_USER
+      - POSTGRES_PASSWORD
+      - POSTGRES_HOST
+
+  pg:
+    image: postgres:${PG_VERSION:-9.6}
+    environment:
+      - POSTGRES_DB
+      - POSTGRES_USER
+      - POSTGRES_PASSWORD
+      - POSTGRES_HOST
+    volumes:
+      - ./sql/request.sql:/docker-entrypoint-initdb.d/request.sql
+  lb:
+    image: jfahrer/lb:v3
+    ports:
+      - 81:80
+    environment:
+      - PROXY_UPSTREAM
+    depends_on:
+      - fast_api

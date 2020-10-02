@@ -24,6 +24,6 @@ RUN pip install -r requirements.txt
 ## start when run the image for container
 CMD ['/data']
 ENTRYPOINT [ "python",  "rentfa.py" ]
-python rentfa.py  /data
+# python rentfa.py  /data
 # ENTRYPOINT [ "sh" ]
 
