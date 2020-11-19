@@ -45,9 +45,9 @@
    
    docker run **--rm** --name mynginx nginx
 ## Opening the port
-  `docker run --name mynginx -p 80:80 nginx`
+  `docker run --name mynginx -d -p 80:80 nginx`
   
-  docker run --name mynginx **-p <sytem_host>:<container_host>** nginx
+  docker run --name mynginx -d  **-p <sytem_host>:<container_host>** nginx
  
  
 # Linux command Used
@@ -58,4 +58,5 @@
 | ps                                    | running process |
 | kill |   Stop the running process      |
 | rm |  Remove the given item      |
-| && |  Run the second command if first succedd     |
+| && |  Run the second command if first succed     |
+| -d |  daemon process or Run the process in background      |
