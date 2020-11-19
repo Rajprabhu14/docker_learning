@@ -1,27 +1,61 @@
-# Build the image
+# Check docker installed
 
-`docker build -t rentscraping:latest .`
+`docker -v`
 
-# create volume
+# Run our first container
 
-`docker container run -it --name demo -v data rentscraping:latest`
+`docker run hello-world`
 
-# To start detach volume
+# Working with Docker
 
-`docker container start demo`
+`docker run alpine ls -l`
 
-# To debug the existing container
 
-`docker container exec -it demo bash`
+`docker run alpine echo 'welcome'`
 
-# To bind the local folder to volume
+# Docker Help
+`docker --help`
 
-`docker container run --name demo --mount type=bind,src=/k/docker_demo_volume,dst=/data rentscraping:latest`
+# List Images
 
-# Difference between mount & volume
+`docker image ls`
 
-| Volume                                                     | Bind                                                     |
+# List container
+## List all container  
+  `docker ps -a`
+## List running container
+ `docker ps -a`
+
+# container Management
+## To Name our container
+  `docker run --name mynginx nginx`
+  
+  docker run **--name mynginx** nginx
+  
+  To Stop the container press `ctrl+c`
+## Start the stopped Container
+   `docker start mynginx`
+## Stop the running container
+   `docker stop mynginx`
+ 
+## Delete the Container
+  `docker kill mynginx && docker rm mynginx`
+## Delete container on kill
+   `docker run --rm --name mynginx nginx`
+   
+   docker run **--rm** --name mynginx nginx
+## Opening the port
+  `docker run --name mynginx -p 80:80 nginx`
+  
+  docker run --name mynginx **-p <sytem_host>:<container_host>** nginx
+ 
+ 
+# Linux command Used
+
+| command                                                     | usage                                                     |
 | ---------------------------------------------------------- | -------------------------------------------------------- |
-| managed via Docker client                                  | we need to handle                                        |
-| Independent file system                                    | The container has access to the files on the docker host |
-| **usage**: backup & configuration(share between container) | **usage**: handling sourcode, configuration file         |
+| ls                               |list file                                        |
+| ps                                    | running process |
+| kill |   Stop the running process      |
+| rm |  Remove the given item      |
+| && |  Run the second command if first succedd     |
