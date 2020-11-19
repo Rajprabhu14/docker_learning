@@ -47,7 +47,7 @@
 ## Opening the port
   `docker run --name mynginx -d -p 80:80 nginx`
   
-  docker run --name mynginx -d  **-p <sytem_host>:<container_host>** nginx
+  docker run --name mynginx -d  **-p <sytem_port>:<container_port>** nginx
  
  
 # Linux command Used
