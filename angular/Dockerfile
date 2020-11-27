@@ -7,6 +7,7 @@ LABEL maintainer="Demo LABEL"
 COPY /myapp/dist /usr/share/nginx/html
 # add to image it can be used on process
 ENV demo=daemon
+COPY nginx.conf /etc/nginx/nginx.conf
 # It will be added with CMD
 ENTRYPOINT ["/docker-entrypoint.sh"]
 

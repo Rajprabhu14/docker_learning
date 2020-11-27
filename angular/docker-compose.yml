@@ -1,0 +1,14 @@
+version: "3.3"
+services:
+  angular:
+    image: arulrajprabhu420/nginx
+    ## with this command we can build the application image & spin up the container
+    # build:
+    #   context: ./
+    ports:
+      - 80:80
+    ## setting of environment
+    # environment:
+    # - PROXY_UPSTREAM
+    # volumes:
+    #   - pg-data

@@ -4,13 +4,11 @@
 
 ls -a
 
-
 `docker pull trion/ng-cli`
 
 ## create angularApp
 
 This command will create angular application in our localsystem
-
 
 `docker run -u $(id -u) --rm -v "$PWD":/app trion/ng-cli ng new myapp`
 
@@ -26,15 +24,13 @@ This command will create angular application in our localsystem
 
 cd myapp/src/app/
 
-
 vi app.component.ts
 
 ## Get the production built
 
 cd && cd myapp
 
-
-docker run -u $(id -u) --rm -v "$PWD":/app trion/ng-cli ng build
+docker run -u $(id -u) --rm -v "$PWD":/app trion/ng-cli ng build --base-href myapp
 
 ## To create the our ownimage
 
@@ -42,3 +38,11 @@ docker run -u $(id -u) --rm -v "$PWD":/app trion/ng-cli ng build
 2. general practise for naming the our image is <docker_id>/<image_name>
 3. Basic structure is `docker build -t <name> <folder_location>`
    eg. `docker build -t arulrajprabhu420/nginx .`
+
+## To run our own image
+
+`docker run --name myapp -p 80:80 -d arulrajprabhu420/nginx`
+
+## next version
+
+docker-compose.yml
