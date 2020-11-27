@@ -16,7 +16,7 @@ This command will create angular application in our localsystem
 
 ## Test the development
 
-`docker run -u $(id -u) --rm -p 4200:4200 -v "$PWD":/app trion/ng-cli ng serve --host 0.0.0.0 --disable-host-check`
+`docker run -u $(id -u) --name myapp --rm -p 4200:4200 -v "$PWD":/app trion/ng-cli ng serve --host 0.0.0.0 --disable-host-check`
 
 ## To check our app reflecting the changes
 
